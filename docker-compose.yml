@@ -19,7 +19,7 @@ services:
     volumes:
       - './script/:/usr/share/nginx/html'
       - './log:/var/log/nginx'
-#      - 'server.whitelist:/etc/nginx/server.whitelist'
+      - 'default.conf:/etc/nginx/site-available/default.conf'
   fluentd-app:
     depends_on:
       - database-app
