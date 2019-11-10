@@ -1,0 +1,42 @@
+version: '3'
+services:
+  database-app:
+    image: mongo
+    restart: always
+    container_name: mongo
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: password
+#      MONGO_INITDB_DATABASE: root
+    ports:
+      - 27017:27017
+  app:
+    image: nginx
+    container_name: app
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - './script/:/usr/share/nginx/html'
+      - './log:/var/log/nginx'
+#      - 'server.whitelist:/etc/nginx/server.whitelist'
+  fluentd-app:
+    depends_on:
+      - database-app
+      - app
+    build:
+      context: .
+      dockerfile: Dockerfile-fluentd
+    container_name: fluentapp
+    volumes:
+      - './logs-fluentd:/root/logs-fluentd'
+      - './log:/root/log'
+      - './fluent.conf:/root/fluent.conf'
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+#    environment:
+#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+#      ME_CONFIG_MONGODB_ADMINPASSWORD: password
